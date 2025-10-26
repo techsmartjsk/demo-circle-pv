@@ -127,7 +127,7 @@ export default function SolarPanelCalculator() {
             <p>{results.totalCarbon.toFixed(2)} kg CO₂e</p>
 
             <p className="font-semibold mt-2">Estimated Recycled Material Value:</p>
-            <p>${results.totalRecycledValue.toFixed(2)} USD</p>
+            <p>US${results.totalRecycledValue.toFixed(2)}</p>
           </div>
         )}
 

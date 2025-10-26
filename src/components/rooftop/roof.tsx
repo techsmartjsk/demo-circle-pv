@@ -18,12 +18,16 @@ export default function Rooftop() {
   const [columns, setColumns] = useState<number>(0);
   const [manualPanelCount, setManualPanelCount] = useState<number | null>(null);
   const [rooftopRects, setRooftopRects] = useState<google.maps.Rectangle[]>([]);
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const [panelsPerRow, setPanelsPerRow] = useState<number>(0);
 
   // If manual number is given, use that. Otherwise fallback to rows * columns.
   const panelCount =
     manualPanelCount !== null && manualPanelCount > 0
-      ? manualPanelCount
-      : rows * columns;
+        ? manualPanelCount
+        : panelsPerRow > 0 && rows > 0
+        ? panelsPerRow * rows
+        : rows * columns;
 
   useEffect(() => {
     const existingScript = document.querySelector(
@@ -35,7 +39,7 @@ export default function Rooftop() {
     }
 
     const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBlH2pSG5K6Sqq8D1evknN6_Bf5TIOC57c&libraries=places,drawing,geometry`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,drawing,geometry`;
     script.async = true;
     script.onload = initMap;
     document.body.appendChild(script);
@@ -221,60 +225,83 @@ export default function Rooftop() {
       <div ref={mapRef} className="border rounded mb-4" style={{ height: "500px" }} />
 
       {roofDetected && (
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div>
-            <label className="block text-sm">Rows of panels:</label>
+        <>
+            <div className="mt-4 flex flex-col lg:flex-row gap-3">
+            <div>
+            <label className="block text-sm">Rows of panels</label>
             <input
-              type="number"
-              value={rows}
-              onChange={(e) => {
-                setRows(parseInt(e.target.value) || 0);
+                type="number"
+                value={rows}
+                onChange={(e) => {
+                const v = parseInt(e.target.value) || 0;
+                setRows(v);
                 setManualPanelCount(null);
-              }}
-              className="border p-2 rounded mt-1 w-full"
+                }}
+                className="border p-2 rounded mt-1 w-full"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm">Columns of panels:</label>
+            </div>
+        
+            <div>
+            <label className="block text-sm">Panels per row</label>
             <input
-              type="number"
-              value={columns}
-              onChange={(e) => {
-                setColumns(parseInt(e.target.value) || 0);
+                type="number"
+                value={panelsPerRow}
+                onChange={(e) => {
+                const v = parseInt(e.target.value) || 0;
+                setPanelsPerRow(v);
                 setManualPanelCount(null);
-              }}
-              className="border p-2 rounded mt-1 w-full"
+                }}
+                className="border p-2 rounded mt-1 w-full"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm">Or enter total panels (uneven layout):</label>
+            </div>
+        
+            <div>
+            <label className="block text-sm">Columns (optional)</label>
             <input
-              type="number"
-              value={manualPanelCount ?? ""}
-              onChange={(e) =>
-                setManualPanelCount(
-                  e.target.value ? parseInt(e.target.value) || 0 : null
-                )
-              }
-              className="border p-2 rounded mt-1 w-full"
+                type="number"
+                value={columns}
+                onChange={(e) => {
+                const v = parseInt(e.target.value) || 0;
+                setColumns(v);
+                setManualPanelCount(null);
+                }}
+                className="border p-2 rounded mt-1 w-full"
             />
-          </div>
-
-          <div className="col-span-3 text-sm text-gray-700 mt-2">
-            Total Panels: <span className="font-semibold">{panelCount}</span>
-          </div>
-
-          <div className="col-span-3 flex justify-end mt-2">
-            <button
-              onClick={handleSave}
-              className="px-3 py-2 bg-green-600 text-white rounded"
-            >
-              Save
-            </button>
-          </div>
+            </div>
+        
+            <div>
+            <label className="block text-sm">Total panels (manual)</label>
+            <input
+                type="number"
+                value={manualPanelCount ?? ""}
+                onChange={(e) => {
+                const val = e.target.value;
+                setManualPanelCount(val ? parseInt(val) || 0 : null);
+                if (val) {
+                    setRows(0);
+                    setColumns(0);
+                    setPanelsPerRow(0);
+                }
+                }}
+                className="border p-2 rounded mt-1 w-full"
+            />
+            </div>
         </div>
+
+        <div className="text-sm text-gray-800 mt-1">
+            Calculated Total: <span className="font-semibold">{panelCount}</span>
+        </div>
+
+        <div className="flex justify-end mt-2">
+            <button
+            onClick={handleSave}
+            className="px-3 py-2 bg-green-600 text-white rounded"
+            >
+                Save
+            </button>
+        </div>
+        </>
+      
       )}
     </div>
   );
