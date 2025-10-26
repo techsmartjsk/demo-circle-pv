@@ -16,6 +16,7 @@ export const Header = () => {
     { name: "Our Solution", url: `${BASE_URL}/solution` },
     { name: "Our Partners", url: `${BASE_URL}/partners` },
     { name: "Panel Donation", url: `${BASE_URL}/donation` },
+    { name: "Recycle Calculator", url: `/calculator` },
     { name: "Sustainability & ESG Impact", url: `${BASE_URL}/esgbenefits` },
   ];
 
@@ -25,7 +26,7 @@ export const Header = () => {
         <Image src={logo} className="h-[40px] w-[130px] lg:h-[60px]" alt="Logo" />
       </Link>
 
-      <div className="hidden lg:flex flex-row items-center gap-x-6">
+      <div className="hidden lg:flex flex-row items-center gap-x-4">
         {links.map((link) => (
           <Link key={link.name} className="text-white text-md" href={link.url}>
             {link.name}
