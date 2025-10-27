@@ -16,7 +16,7 @@ export const Header = () => {
     { name: "Our Solution", url: `${BASE_URL}/solution` },
     { name: "Our Partners", url: `${BASE_URL}/partners` },
     { name: "Panel Donation", url: `${BASE_URL}/donation` },
-    { name: "Recycle Calculator", url: `/calculator` },
+    { name: "Recycle Worth Calculator", url: `/calculator` },
     { name: "Sustainability & ESG Impact", url: `${BASE_URL}/esgbenefits` },
   ];
 
